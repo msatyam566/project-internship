@@ -14,9 +14,9 @@ router.get("/test-me", function (req, res) {
 
 
 
-router.post("/colleges", controller.createCollege)
-router.post("/interns",interncontroller .createIntern)
-router.get("/getcollegedetails", controller.getcollegeDetails)
+router.post("/functionup/colleges", controller.createCollege)
+router.post("/functionup/interns",interncontroller .createIntern)
+router.get("/functionup/getcollegedetails", controller.getcollegeDetails)
 
 
 
