@@ -4,10 +4,10 @@ const emailValidator = require('validator');
 
 const createIntern = async function (req, res) {
     try {
-        let data = req.body
+        let intern = req.body
         const { email } = req.body
-        if (Object.entries(data).length == 0) {
-            res.status(400).send({ status: false, msg: "please pass some data above" })
+        if (Object.entries(intern).length == 0) {
+           return res.status(400).send({ status: false, msg: "please pass some data above" })
         }
         const isValidEmail = emailValidator.isEmail(email)
         if (!isValidEmail) {
@@ -33,8 +33,8 @@ const createIntern = async function (req, res) {
                 return res.status(400).send({ status: false, msg: "please provide a number" })
 
             if (!(/^(\+91[\-\s]?)?[0]?(91)?[789]\d{9}$/.test(mobile))) {
-                res.status(400).send({ status: false, msg: " enter valid no." })
-                return
+                return  res.status(400).send({ status: false, msg: " enter valid number" })
+                
             }
 
             let validemail = await internModel.findOne({ email })
@@ -46,8 +46,8 @@ const createIntern = async function (req, res) {
                 return res.status(401).send({ status: false, msg: "mobile number is already exist" })
             }
 
-            let savedData = await internModel.create(data)
-            return res.status(201).send({ status: true, data: savedData })
+            let savedIntern = await internModel.create(intern)
+            return res.status(201).send({ status: true, data: savedIntern })
 
         }
     }
