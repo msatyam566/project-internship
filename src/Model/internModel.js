@@ -12,7 +12,7 @@ const internmodel = new mongoose.Schema({
         required: true,
         unique: true,
         type: String,
-
+        
     },
 
     mobile: {
@@ -24,7 +24,7 @@ const internmodel = new mongoose.Schema({
     },
     collegeId: {
         type: ObjectId,
-        ref: " collegeModel"
+        ref:"collegeModel"
     },
     isDeleted: {
         type: Boolean,

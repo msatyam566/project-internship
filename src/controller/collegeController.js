@@ -24,14 +24,12 @@ const createCollege = async function (req, res) {
 
          let Name = await collegeModel.findOne({ name })
          if (Name) {
-            return res.status(401).send({ status: false, msg: "enter unique name" })
+            return res.status(400).send({ status: false, msg: "enter unique name" })
          }
          let savedCollege = await collegeModel.create(college);
          res.status(201).send({ status: true, msg: savedCollege });
       }
    }
-
-
    catch (error) {
       console.log(error)
       return res.status(500).send({ status: false, msg: error.message })
@@ -39,48 +37,35 @@ const createCollege = async function (req, res) {
 };
 
 const getcollegeDetails = async function (req, res) {
-   try {
-      const collegeName = req.query.collegeName
+   try{
+      res.setHeader('Acess-Control-Allow-origin','*')
+      if (req.query.collegeName){
+         let college = await collegeModel.findOne({name:req.query.collegeName, isDeleted:false})
+         if(!college){
+            res.status(404).send({status:false,msg:" college not found"})
+         }   else{
+               let collegeData ={
+                  name:college.name,
+                  fullName:college.fullName,
+                  logoLink:college.logoLink
 
-      if (!collegeName) { return res.status(400).send({ status: false, msg: "BAD REQUEST please provied valid collegeName" }) }
-      const college = await collegeModel.find({ name: collegeName, isDeleted: false })
-      if (!college) {
-         return res.status(404).send({ status: false, msg: "BAD REQUEST  college not found" })
-      }
-      console.log(college)
-      const collegeId = college[0].id
+               }
+               let interns = await internModel.find({collegeId: college._id, isDeleted:false},'-collegeId -isDeleted -createdAt -updatedAt -v').sort({createdAt:-1})
+               if (interns){
+                  collegeData.interns = interns
+               }
+               res.status(201).send({status:true,data:collegeData})
+            }
+               }      else{ 
+                  res.status(404).send({status:false,msg:"college Name must be presnt"})
 
-
-      const interName = await internModel.find({ collegeId: collegeId, isDeleted: false })
-      if (interName.length == 0) return res.status(404).send({ msg: `No intern apply for this college: ${college} ` })
-      const interns = []
-
-      for (let i = 0; i < interName.length; i++) {
-         let Object = {}
-         Object._id = interName[i].id
-         Object.name = interName[i].name
-         Object.email = interName[i].email
-         Object.mobile = interName[i].mobile
-         interns.push(Object)
-      }
-
-      const ObjectData = {
-         name: college[0].name,
-         fullName: college[0].fullName,
-         logoLink: college[0].logoLink,
-         interns: interns
-      }
-
-      return res.status(200).send({ status: true, count: interns.length, msg: ObjectData })
-
-
+            }
+         } catch (error){
+            res.status(500).send({status:false,msg:error.messege})
+         } 
+         
+      
    }
-   catch (err) {
-      return res.status(500).send({ status: false, msg: err.message })
-   }
-}
-
-
 
 
 
@@ -88,3 +73,12 @@ const getcollegeDetails = async function (req, res) {
 
 module.exports.createCollege = createCollege
 module.exports.getcollegeDetails = getcollegeDetails
+
+
+
+
+
+
+
+
+
